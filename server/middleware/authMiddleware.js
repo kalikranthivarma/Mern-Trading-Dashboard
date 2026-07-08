@@ -72,28 +72,16 @@ export const authorize = (...roles) => {
 };
 
 /* ==========================================================
-   Admin Only Middleware
+   Admin Protect Middleware
 ========================================================== */
 
-export const adminOnly = authorize("Admin");
+export const adminProtect = authorize("admin");
 
 /* ==========================================================
-   Trader Only Middleware
+   User Protect Middleware
 ========================================================== */
 
-export const traderOnly = authorize("Trader");
-
-/* ==========================================================
-   Analyst Only Middleware
-========================================================== */
-
-export const analystOnly = authorize("Analyst");
-
-/* ==========================================================
-   Admin OR Trader
-========================================================== */
-
-export const adminOrTrader = authorize("Admin", "Trader");
+export const userProtect = authorize("user");
 
 /* ==========================================================
    Optional Authentication

@@ -59,6 +59,7 @@ import portfolioRoutes from "./routes/portfolioRoutes.js";
 import tradeRoutes from "./routes/tradeRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import reportRoutes from "./routes/reportRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 // Socket
 import { initializeSocket } from "./socket/socket.js";
@@ -113,6 +114,9 @@ app.use("/api/reports", reportRoutes);
 // Razorpay Payment Routes
 app.use("/api/payment", paymentRoutes);
 
+// Admin Routes
+app.use("/api/admin", adminRoutes);
+
 // Handle Unknown Routes
 app.use("*", (req, res) => {
   res.status(404).json({
@@ -125,7 +129,7 @@ app.use("*", (req, res) => {
 app.use((err, req, res, next) => {
   console.error(err.stack);
 
-  res.status(err.status || 500).json({
+  res.status(err.statusCode || err.status || 500).json({
     success: false,
     message: err.message || "Internal Server Error",
   });

@@ -16,10 +16,24 @@ import OrdersPage from '../pages/OrdersPage';
 import ReportsPage from '../pages/ReportsPage';
 import NotificationsPage from '../pages/NotificationsPage';
 import SettingsPage from '../pages/SettingsPage';
-import AdminPage from '../pages/AdminPage';
 import ProfilePage from '../pages/ProfilePage';
 import HelpPage from '../pages/HelpPage';
 import AboutPage from '../pages/AboutPage';
+
+// Admin Module
+import AdminLayout from '../layouts/AdminLayout';
+import AdminLoginPage from '../pages/admin/AdminLoginPage';
+import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
+import AdminUsersPage from '../pages/admin/AdminUsersPage';
+import AdminAssetsPage from '../pages/admin/AdminAssetsPage';
+import AdminMarketPage from '../pages/admin/AdminMarketPage';
+import AdminOrdersPage from '../pages/admin/AdminOrdersPage';
+import AdminTransactionsPage from '../pages/admin/AdminTransactionsPage';
+import AdminAnalyticsPage from '../pages/admin/AdminAnalyticsPage';
+import AdminSettingsPage from '../pages/admin/AdminSettingsPage';
+import AdminNotificationsPage from '../pages/admin/AdminNotificationsPage';
+
+
 import { useSelector } from 'react-redux';
 
 const ProtectedRoute = ({ roles }) => {
@@ -40,6 +54,21 @@ const AppRoutes = () => (
   <Routes>
     {/* Public Landing Page */}
     <Route path="/" element={<LandingPage />} />
+
+    {/* Admin Module Routes */}
+    <Route path="/admin/login" element={<AdminLoginPage />} />
+    <Route path="/admin" element={<AdminLayout />}>
+      <Route index element={<Navigate to="dashboard" replace />} />
+      <Route path="dashboard" element={<AdminDashboardPage />} />
+      <Route path="users" element={<AdminUsersPage />} />
+      <Route path="assets" element={<AdminAssetsPage />} />
+      <Route path="transactions" element={<AdminTransactionsPage />} />
+      <Route path="analytics" element={<AdminAnalyticsPage />} />
+      <Route path="market" element={<AdminMarketPage />} />
+      <Route path="orders" element={<AdminOrdersPage />} />
+      <Route path="notifications" element={<AdminNotificationsPage />} />
+      <Route path="settings" element={<AdminSettingsPage />} />
+    </Route>
 
     {/* Auth Routes */}
     <Route element={<AuthLayout />}>
@@ -62,7 +91,6 @@ const AppRoutes = () => (
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/admin" element={<AdminPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/help" element={<HelpPage />} />
         <Route path="/about" element={<AboutPage />} />

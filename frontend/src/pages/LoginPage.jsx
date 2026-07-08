@@ -27,6 +27,21 @@ const LoginPage = () => {
 
   return (
     <div>
+      <div className="flex justify-center gap-4 mb-8">
+        <Link 
+          to="/login"
+          className="px-6 py-2 rounded-xl text-sm font-medium bg-sky-500/20 text-sky-400 border border-sky-500/50 shadow-[0_0_15px_rgba(14,165,233,0.3)]"
+        >
+          User Sign In
+        </Link>
+        <Link 
+          to="/admin/login"
+          className="px-6 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-400 border border-slate-700 hover:bg-slate-700 transition-colors"
+        >
+          Admin Sign In
+        </Link>
+      </div>
+
       <h1 className="text-3xl font-bold text-white">Welcome back</h1>
       <p className="mt-2 text-slate-400">Sign in to access your trading dashboard.</p>
       <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6">
