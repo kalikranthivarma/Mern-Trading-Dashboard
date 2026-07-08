@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { getAssets } from '../services/assetService';
 import { placeOrder, getTradeHistory } from '../services/tradingService';
+import { createPaymentOrder, verifyPaymentSignature } from '../services/paymentService';
 import { useSocket } from '../hooks/useSocket';
 
 const TradingPage = () => {
@@ -72,26 +73,77 @@ const TradingPage = () => {
     try {
       const selectedAsset = assets.find((a) => a._id === values.assetId);
       const price = values.orderType === 'limit' ? Number(values.price) : selectedAsset?.currentPrice || 0;
+      const quantity = Number(values.quantity);
+      const totalAmount = quantity * price;
 
-      const payload = {
-        asset: values.assetId,
-        side: values.side,
-        quantity: Number(values.quantity),
-        price: price
+      if (totalAmount <= 0) {
+        toast.error('Invalid order amount');
+        return;
+      }
+
+      // Create Payment Order
+      const paymentOrderResponse = await createPaymentOrder(totalAmount);
+      
+      if (!paymentOrderResponse.success) {
+        throw new Error('Failed to create payment order');
+      }
+
+      const orderOptions = {
+        key: import.meta.env.VITE_RAZORPAY_KEY,
+        amount: paymentOrderResponse.order.amount,
+        currency: paymentOrderResponse.order.currency,
+        name: 'Financial Trading Dashboard',
+        description: `Trade ${quantity} ${selectedAsset.symbol}`,
+        order_id: paymentOrderResponse.order.id,
+        handler: async (response) => {
+          try {
+            // Verify Payment Signature
+            const verifyResponse = await verifyPaymentSignature({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              amount: totalAmount,
+            });
+
+            if (verifyResponse.success) {
+              // Place Order
+              const payload = {
+                asset: values.assetId,
+                side: values.side,
+                quantity: quantity,
+                price: price
+              };
+
+              const tradeResponse = await placeOrder(payload);
+              const tradeData = tradeResponse.data || tradeResponse;
+              const executedTrade = {
+                ...tradeData,
+                asset: selectedAsset,
+                tradeType: values.side.toUpperCase()
+              };
+
+              toast.success(`Payment successful and order executed`);
+              setRecentTrades((current) => [executedTrade, ...current].slice(0, 5));
+            } else {
+              toast.error('Payment verification failed. Order not placed.');
+            }
+          } catch (error) {
+            toast.error(error?.response?.data?.message || 'Payment verification error');
+          }
+        },
+        theme: {
+          color: '#0ea5e9'
+        }
       };
 
-      const response = await placeOrder(payload);
-      const tradeData = response.data || response;
-      const executedTrade = {
-        ...tradeData,
-        asset: selectedAsset,
-        tradeType: values.side.toUpperCase()
-      };
+      const rzp = new window.Razorpay(orderOptions);
+      rzp.on('payment.failed', function (response) {
+        toast.error('Payment failed. Order not placed.');
+      });
+      rzp.open();
 
-      toast.success(`Order executed successfully`);
-      setRecentTrades((current) => [executedTrade, ...current].slice(0, 5));
     } catch (error) {
-      toast.error(error?.response?.data?.message || 'Order submission failed');
+      toast.error(error?.response?.data?.message || error.message || 'Order submission failed');
     }
   };
 

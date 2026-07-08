@@ -16,6 +16,7 @@ import reportRoutes from "./routes/reportRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import fileRoutes from "./routes/fileRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
@@ -121,6 +122,8 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/files", fileRoutes);
 
 app.use("/api/dashboard", dashboardRoutes);
+
+app.use("/api/payment", paymentRoutes);
 
 /* ==========================================================
    404 Route
