@@ -43,6 +43,22 @@ const AdminUsersPage = () => {
     }
   };
 
+  const exportToCSV = () => {
+    if (!users.length) return;
+    const headers = ["ID,Name,Email,Role,Status,Verified,Joined Date\n"];
+    const csvData = users.map(u => 
+      `${u._id},"${u.name}","${u.email}",${u.role},${u.isActive ? 'Active' : 'Suspended'},${u.isVerified},${new Date(u.createdAt).toLocaleDateString()}`
+    ).join("\n");
+    
+    const blob = new Blob([headers + csvData], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `users_export_${Date.now()}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
   const filteredUsers = users.filter(user => 
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -52,10 +68,13 @@ const AdminUsersPage = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">User Management</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">User Management</h1>
           <p className="text-gray-400 text-sm mt-1">Manage platform users, roles, and statuses.</p>
         </div>
-        <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors shadow-lg shadow-indigo-500/20">
+        <button 
+          onClick={exportToCSV}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors shadow-lg shadow-indigo-500/20"
+        >
           Export Users
         </button>
       </div>
@@ -79,10 +98,11 @@ const AdminUsersPage = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-[800px]">
             <thead>
               <tr className="bg-gray-900/50 text-gray-400 text-xs uppercase tracking-wider">
                 <th className="p-4 font-medium">User</th>
+                <th className="p-4 font-medium">Role</th>
                 <th className="p-4 font-medium">Status</th>
                 <th className="p-4 font-medium">Verified</th>
                 <th className="p-4 font-medium">Joined</th>
@@ -111,6 +131,16 @@ const AdminUsersPage = () => {
                           <p className="text-sm text-gray-400">{user.email}</p>
                         </div>
                       </div>
+                    </td>
+                    <td className="p-4">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase ${
+                        user.role === 'superadmin' ? "bg-purple-500/10 text-purple-400 border border-purple-500/20" :
+                        user.role === 'admin' ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20" :
+                        user.role === 'support' ? "bg-sky-500/10 text-sky-400 border border-sky-500/20" :
+                        "bg-slate-500/10 text-slate-400 border border-slate-500/20"
+                      }`}>
+                        {user.role}
+                      </span>
                     </td>
                     <td className="p-4">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${

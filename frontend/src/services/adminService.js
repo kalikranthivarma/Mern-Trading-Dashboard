@@ -115,3 +115,17 @@ export const createGlobalNotification = async (data, token) => {
   });
   return response.data;
 };
+
+export const getWithdrawals = async (token) => {
+  const response = await axios.get("http://localhost:5000/api/withdrawals/admin/all", {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+export const processWithdrawal = async (id, action, remarks, token) => {
+  const response = await axios.post(`http://localhost:5000/api/withdrawals/admin/${id}/${action}`, { remarks }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};

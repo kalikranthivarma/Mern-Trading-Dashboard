@@ -24,7 +24,9 @@ const AdminSettingsPage = () => {
         if (res.success && res.data) {
           setSettings(prev => ({
             ...prev,
-            maintenanceMode: res.data.marketStatus === "maintenance"
+            maintenanceMode: res.data.marketStatus === "maintenance",
+            tradingFeePercentage: res.data.tradingFeePercent || "0.1",
+            withdrawalFeeFixed: res.data.withdrawalFeeFlat || "5.00"
           }));
         }
       } catch (error) {
@@ -46,11 +48,31 @@ const AdminSettingsPage = () => {
 
   const handleSave = async () => {
     setSaving(true);
-    // Mock save delay
-    setTimeout(() => {
+    try {
+      const token = localStorage.getItem("adminToken");
+      const res = await fetch("/api/admin/settings", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          tradingFeePercent: Number(settings.tradingFeePercentage),
+          withdrawalFeeFlat: Number(settings.withdrawalFeeFixed)
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert("Settings saved successfully!");
+      } else {
+        alert(data.message || "Failed to save settings");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error saving settings");
+    } finally {
       setSaving(false);
-      alert("Settings saved successfully!");
-    }, 1000);
+    }
   };
 
   if (loading) {
@@ -61,7 +83,7 @@ const AdminSettingsPage = () => {
     <div className="space-y-6 max-w-5xl">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">System Settings</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">System Settings</h1>
           <p className="text-gray-400 text-sm mt-1">Configure global platform parameters and rules.</p>
         </div>
         <button 

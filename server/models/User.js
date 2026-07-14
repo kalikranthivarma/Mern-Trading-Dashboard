@@ -15,6 +15,22 @@ const userSchema = new mongoose.Schema(
       maxlength: 100,
     },
 
+    /* ==========================================================
+       Wallet Balances
+    ========================================================== */
+
+    availableBalance: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    lockedBalance: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
     email: {
       type: String,
       required: [true, "Email is required"],
@@ -37,7 +53,7 @@ const userSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["user", "admin"],
+      enum: ["user", "admin", "superadmin", "support"],
       default: "user",
     },
 
@@ -53,6 +69,21 @@ const userSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true,
+    },
+
+    /* ==========================================================
+       KYC Settings
+    ========================================================== */
+
+    kycStatus: {
+      type: String,
+      enum: ["unverified", "pending", "approved", "rejected"],
+      default: "unverified",
+    },
+
+    kycDocument: {
+      type: String,
+      default: "", // URL or gridfs reference to the ID doc
     },
 
     /* ==========================================================
@@ -84,6 +115,11 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
       select: false,
+    },
+
+    lastVerificationEmailSentAt: {
+      type: Date,
+      default: null,
     },
 
     /* ==========================================================

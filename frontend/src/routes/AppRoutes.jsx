@@ -12,9 +12,11 @@ import PortfolioPage from '../pages/PortfolioPage';
 import TradingPage from '../pages/TradingPage';
 import AnalyticsPage from '../pages/AnalyticsPage';
 import AssetsPage from '../pages/AssetsPage';
+import WalletPage from '../pages/WalletPage';
 import OrdersPage from '../pages/OrdersPage';
 import ReportsPage from '../pages/ReportsPage';
 import NotificationsPage from '../pages/NotificationsPage';
+import KYCPage from '../pages/KYCPage';
 import SettingsPage from '../pages/SettingsPage';
 import ProfilePage from '../pages/ProfilePage';
 import HelpPage from '../pages/HelpPage';
@@ -32,6 +34,8 @@ import AdminTransactionsPage from '../pages/admin/AdminTransactionsPage';
 import AdminAnalyticsPage from '../pages/admin/AdminAnalyticsPage';
 import AdminSettingsPage from '../pages/admin/AdminSettingsPage';
 import AdminNotificationsPage from '../pages/admin/AdminNotificationsPage';
+import AdminKYCPage from '../pages/admin/AdminKYCPage';
+import AdminWithdrawalsPage from '../pages/admin/AdminWithdrawalsPage';
 
 
 import { useSelector } from 'react-redux';
@@ -63,11 +67,13 @@ const AppRoutes = () => (
       <Route path="users" element={<AdminUsersPage />} />
       <Route path="assets" element={<AdminAssetsPage />} />
       <Route path="transactions" element={<AdminTransactionsPage />} />
+      <Route path="withdrawals" element={<AdminWithdrawalsPage />} />
       <Route path="analytics" element={<AdminAnalyticsPage />} />
       <Route path="market" element={<AdminMarketPage />} />
       <Route path="orders" element={<AdminOrdersPage />} />
       <Route path="notifications" element={<AdminNotificationsPage />} />
       <Route path="settings" element={<AdminSettingsPage />} />
+      <Route path="kyc" element={<AdminKYCPage />} />
     </Route>
 
     {/* Auth Routes */}
@@ -84,12 +90,14 @@ const AppRoutes = () => (
       <Route element={<AppLayout />}>
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/portfolio" element={<PortfolioPage />} />
+        <Route path="/wallet" element={<WalletPage />} />
         <Route path="/trading" element={<TradingPage />} />
         <Route path="/analytics" element={<AnalyticsPage />} />
         <Route path="/market" element={<AssetsPage />} />
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/notifications" element={<NotificationsPage />} />
+        <Route path="/kyc" element={<KYCPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/help" element={<HelpPage />} />

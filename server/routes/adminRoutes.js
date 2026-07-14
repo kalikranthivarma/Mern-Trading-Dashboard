@@ -21,8 +21,11 @@ import {
   getOrders,
   cancelOrder,
   getSettings,
+  updateSettings,
   getAdminNotifications,
   createGlobalNotification,
+  getPendingKyc,
+  approveRejectKyc,
 } from "../controllers/adminController.js";
 import { protect, adminProtect } from "../middleware/authMiddleware.js";
 
@@ -56,6 +59,10 @@ router.route("/users/:id")
   .delete(deleteUser);
 router.patch("/users/:id/suspend", suspendUser);
 router.patch("/users/:id/activate", activateUser);
+
+// KYC
+router.get("/kyc/pending", getPendingKyc);
+router.patch("/kyc/:id", approveRejectKyc);
 
 // Assets
 router.route("/assets")
@@ -94,7 +101,10 @@ router.get("/orders", getOrders);
 router.patch("/orders/:id/cancel", cancelOrder);
 
 // Settings
-router.get("/settings", getSettings);
+router.route("/settings")
+  .get(getSettings)
+  .put(updateSettings);
+router.patch("/settings/market-status", updateMarketStatus);
 
 // Notifications
 router.route("/notifications")

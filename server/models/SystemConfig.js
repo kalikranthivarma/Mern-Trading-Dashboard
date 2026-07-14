@@ -11,6 +11,22 @@ const systemConfigSchema = new mongoose.Schema(
       type: String,
       default: "System is currently under maintenance. Please try again later.",
     },
+    tradingFeePercent: {
+      type: Number,
+      default: 0.1, // 0.1% per trade
+    },
+    withdrawalFeeFlat: {
+      type: Number,
+      default: 25.0, // Base platform fee
+    },
+    withdrawalProcessingFee: {
+      type: Number,
+      default: 10.0, // Bank processing fee
+    },
+    gstPercent: {
+      type: Number,
+      default: 18.0, // 18% GST on fees
+    },
   },
   {
     timestamps: true,

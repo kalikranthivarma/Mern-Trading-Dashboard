@@ -28,13 +28,35 @@ const AdminTransactionsPage = () => {
     tx.razorpayPaymentId?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const exportToCSV = () => {
+    if (!transactions.length) return;
+    const headers = ["ID,Date,Transaction ID,User,Type,Amount,Status\n"];
+    const csvData = transactions.map(tx => 
+      `${tx._id},${new Date(tx.createdAt).toLocaleDateString()},${tx.razorpayPaymentId},${tx.user?.email || 'N/A'},Deposit,${tx.amount},${tx.status}`
+    ).join("\n");
+    
+    const blob = new Blob([headers + csvData], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `transactions_export_${Date.now()}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Transactions Ledger</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Transactions Ledger</h1>
           <p className="text-gray-400 text-sm mt-1">View all deposits, withdrawals, and internal transfers.</p>
         </div>
+        <button 
+          onClick={exportToCSV}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors shadow-lg shadow-indigo-500/20"
+        >
+          Export Transactions
+        </button>
       </div>
 
       <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl overflow-hidden">
@@ -51,8 +73,8 @@ const AdminTransactionsPage = () => {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+          <table className="w-full text-left border-collapse min-w-[800px]">
             <thead>
               <tr className="bg-gray-900/50 text-gray-400 text-xs uppercase tracking-wider">
                 <th className="p-4 font-medium">Date</th>
@@ -96,7 +118,7 @@ const AdminTransactionsPage = () => {
                       </div>
                     </td>
                     <td className="p-4">
-                      <span className="text-white font-medium">${tx.amount?.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+                      <span className="text-white font-medium">₹{tx.amount?.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
                     </td>
                     <td className="p-4">
                       <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${

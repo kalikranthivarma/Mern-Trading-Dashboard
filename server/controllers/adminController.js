@@ -7,6 +7,7 @@ import Trade from "../models/Trade.js";
 import Portfolio from "../models/Portfolio.js";
 import SystemConfig from "../models/SystemConfig.js";
 import Notification from "../models/Notification.js";
+import Kyc from "../models/Kyc.js";
 import ApiError from "../utils/ApiError.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
@@ -32,7 +33,8 @@ export const loginAdmin = async (req, res, next) => {
 
     const user = await User.findOne({ email }).select("+password");
 
-    if (!user || user.role !== "admin") {
+    const allowedAdminRoles = ["admin", "superadmin", "support"];
+    if (!user || !allowedAdminRoles.includes(user.role)) {
       return next(new ApiError(401, "Invalid credentials or unauthorized"));
     }
 
@@ -223,10 +225,53 @@ export const getDashboardStats = async (req, res, next) => {
    User Management
 ========================================================== */
 
+export const getPendingKyc = async (req, res, next) => {
+  try {
+    const kycRequests = await Kyc.find()
+      .populate("user", "name email createdAt")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, data: kycRequests });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const approveRejectKyc = async (req, res, next) => {
+  try {
+    const { status, remarks } = req.body;
+    if (!["approved", "rejected", "under_review"].includes(status)) {
+      return next(new ApiError(400, "Invalid status"));
+    }
+
+    const kyc = await Kyc.findOne({ user: req.params.id });
+    if (!kyc) return next(new ApiError(404, "KYC record not found"));
+
+    kyc.status = status;
+    kyc.remarks = remarks || "";
+    kyc.reviewedBy = req.user._id;
+    kyc.reviewedAt = new Date();
+    await kyc.save();
+
+    const user = await User.findById(req.params.id);
+    if (user) {
+      user.kycStatus = status;
+      await user.save();
+    }
+
+    // Note: Here you would trigger KYC approval/rejection emails via emailHelper.
+
+    res.status(200).json({ success: true, data: kyc });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getUsers = async (req, res, next) => {
   try {
-    const users = await User.find({ role: "user" }).select("-password");
-    res.status(200).json({ success: true, data: users });
+    const users = await User.find().select("-password").sort({ createdAt: -1 });
+    res.status(200).json({
+      success: true, data: users });
   } catch (error) {
     next(error);
   }
@@ -489,6 +534,25 @@ export const updateMarketStatus = async (req, res, next) => {
       config.marketStatus = status;
       await config.save();
     }
+    res.status(200).json({ success: true, data: config });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateSettings = async (req, res, next) => {
+  try {
+    const { tradingFeePercent, withdrawalFeeFlat, maintenanceMessage } = req.body;
+    let config = await SystemConfig.findOne();
+    if (!config) {
+      config = await SystemConfig.create({});
+    }
+    
+    if (tradingFeePercent !== undefined) config.tradingFeePercent = tradingFeePercent;
+    if (withdrawalFeeFlat !== undefined) config.withdrawalFeeFlat = withdrawalFeeFlat;
+    if (maintenanceMessage !== undefined) config.maintenanceMessage = maintenanceMessage;
+
+    await config.save();
     res.status(200).json({ success: true, data: config });
   } catch (error) {
     next(error);

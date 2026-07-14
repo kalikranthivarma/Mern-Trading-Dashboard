@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Search, Filter, Edit2, Trash2, Plus, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { getAssets } from "../../services/adminService"; // I need to add createAsset, updateAsset, deleteAsset to adminService!
 import axios from "axios";
+import Swal from 'sweetalert2';
 
 // Quick fallback for API instance
 const adminApi = axios.create({
@@ -31,7 +32,18 @@ const AdminAssetsPage = () => {
   }, []);
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this asset?")) return;
+    const result = await Swal.fire({
+      title: 'Delete Asset?',
+      text: 'Are you sure you want to delete this asset?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#e11d48', // rose-600
+      cancelButtonColor: '#334155', // slate-700
+      confirmButtonText: 'Yes, delete it!',
+      background: '#0f172a', // slate-950
+      color: '#f8fafc' // slate-50
+    });
+    if (!result.isConfirmed) return;
     try {
       const token = localStorage.getItem("adminToken");
       await adminApi.delete(`/assets/${id}`, { headers: { Authorization: `Bearer ${token}` } });
@@ -50,7 +62,7 @@ const AdminAssetsPage = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Asset Management</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Asset Management</h1>
           <p className="text-gray-400 text-sm mt-1">Manage tradable cryptocurrencies and stocks.</p>
         </div>
         <button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors shadow-lg shadow-indigo-500/20">
@@ -73,8 +85,8 @@ const AdminAssetsPage = () => {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+          <table className="w-full text-left border-collapse min-w-[500px]">
             <thead>
               <tr className="bg-gray-900/50 text-gray-400 text-xs uppercase tracking-wider">
                 <th className="p-4 font-medium">Asset</th>
@@ -112,7 +124,7 @@ const AdminAssetsPage = () => {
                     </td>
                     <td className="p-4">
                       <div className="flex items-center gap-2">
-                        <span className="text-white">${asset.currentPrice.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+                        <span className="text-white">₹{asset.currentPrice.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
                       </div>
                     </td>
                     <td className="p-4">

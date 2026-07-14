@@ -152,15 +152,15 @@ const LandingPage = () => {
               <div className="space-y-3">
                 <div className="flex justify-between text-sm py-1 border-b border-white/5">
                   <span className="font-semibold text-white">AAPL (Apple Inc.)</span>
-                  <span className="font-mono text-slate-300 font-semibold">$182.50</span>
+                  <span className="font-mono text-slate-300 font-semibold">₹182.50</span>
                 </div>
                 <div className="flex justify-between text-sm py-1 border-b border-white/5">
                   <span className="font-semibold text-white">BTC (Bitcoin)</span>
-                  <span className="font-mono text-slate-300 font-semibold">$62,450.00</span>
+                  <span className="font-mono text-slate-300 font-semibold">₹62,450.00</span>
                 </div>
                 <div className="flex justify-between text-sm py-1">
                   <span className="font-semibold text-white">TSLA (Tesla Inc.)</span>
-                  <span className="font-mono text-slate-300 font-semibold">$174.60</span>
+                  <span className="font-mono text-slate-300 font-semibold">₹174.60</span>
                 </div>
               </div>
             </div>

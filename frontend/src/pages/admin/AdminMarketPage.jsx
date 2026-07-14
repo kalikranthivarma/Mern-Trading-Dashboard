@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
+import Swal from 'sweetalert2';
 import { Activity, Play, Pause, AlertTriangle } from "lucide-react";
 import { getSettings, updateMarketStatus } from "../../services/adminService";
 
@@ -26,7 +28,18 @@ const AdminMarketPage = () => {
 
   const handleStatusChange = async (newStatus) => {
     if (newStatus === marketStatus) return;
-    if (!window.confirm(`Are you sure you want to change the market status to ${newStatus.toUpperCase()}?`)) return;
+    const result = await Swal.fire({
+      title: 'Change Market Status?',
+      text: `Do you want to change the market status to ${newStatus.toUpperCase()}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#0ea5e9',
+      cancelButtonColor: '#334155',
+      confirmButtonText: 'Yes, proceed',
+      background: '#0f172a',
+      color: '#f8fafc'
+    });
+    if (!result.isConfirmed) return;
     
     setProcessing(true);
     try {

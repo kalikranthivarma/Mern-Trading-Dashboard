@@ -20,7 +20,10 @@ const normalizeUser = (user) => ({
   isVerified: user.isVerified,
   profileImage: user.profileImage,
   phone: user.phone,
-  lastLogin: user.lastLogin
+  lastLogin: user.lastLogin,
+  availableBalance: user.availableBalance,
+  lockedBalance: user.lockedBalance,
+  kycStatus: user.kycStatus
 });
 
 const hashToken = (token) => crypto.createHash('sha256').update(token).digest('hex');
@@ -79,14 +82,40 @@ const sendVerificationEmail = async (user, token) => {
 
   return sendEmail({
     to: user.email,
-    subject: 'Verify your trading dashboard account',
-    text: `Verify your account using this link: ${verifyUrl}`,
+    subject: 'Action Required: Verify your Trading Dashboard Account',
+    text: `Welcome to Trading Dashboard. Verify your account using this link: ${verifyUrl}`,
     html: `
-      <p>Welcome to Trading Dashboard.</p>
-      <p>Click the link below to verify your email address and activate your account:</p>
-      <p><a href="${verifyUrl}">Verify email address</a></p>
-      <p>If the button does not work, copy this link into your browser:</p>
-      <p>${verifyUrl}</p>
+      <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0a1128; color: #f8fafc; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);">
+        <div style="background-color: #1e293b; padding: 32px 40px; text-align: center; border-bottom: 1px solid #334155;">
+          <h1 style="margin: 0; color: #fff; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">Neo-Fintech</h1>
+        </div>
+        <div style="padding: 40px;">
+          <h2 style="margin-top: 0; color: #fff; font-size: 20px; font-weight: 600;">Welcome, ${user.name}!</h2>
+          <p style="color: #94a3b8; font-size: 16px; line-height: 1.6; margin-bottom: 32px;">
+            Thank you for creating an account. To unlock full trading access and secure your account, please verify your email address by clicking the button below.
+          </p>
+          <div style="text-align: center; margin-bottom: 32px;">
+            <a href="${verifyUrl}" style="display: inline-block; background-color: #0ea5e9; color: #fff; text-decoration: none; padding: 14px 32px; font-size: 16px; font-weight: 600; border-radius: 9999px; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);">
+              Verify Email Address
+            </a>
+          </div>
+          <p style="color: #64748b; font-size: 14px; margin-bottom: 16px;">
+            Or copy and paste this link into your browser:
+            <br>
+            <a href="${verifyUrl}" style="color: #38bdf8; text-decoration: none; word-break: break-all;">${verifyUrl}</a>
+          </p>
+          <div style="background-color: rgba(14, 165, 233, 0.1); border-left: 4px solid #0ea5e9; padding: 16px; border-radius: 0 8px 8px 0; margin-top: 32px;">
+            <p style="margin: 0; color: #bae6fd; font-size: 14px;">
+              <strong>Security Notice:</strong> This link will expire in 24 hours. If you did not create this account, you can safely ignore this email.
+            </p>
+          </div>
+        </div>
+        <div style="background-color: #0f172a; padding: 24px 40px; text-align: center; border-top: 1px solid #1e293b;">
+          <p style="margin: 0; color: #475569; font-size: 12px;">
+            &copy; ${new Date().getFullYear()} Neo-Fintech Trading. All rights reserved.
+          </p>
+        </div>
+      </div>
     `
   });
 };
@@ -109,7 +138,7 @@ const issueTokenPair = async ({ user, req, replacedByTokenHash }) => {
   return { accessToken, refreshToken };
 };
 
-export const register = async ({ name, email, password, role = 'Viewer', req }) => {
+export const register = async ({ name, email, password, role = 'user', req }) => {
   const existingUser = await User.findOne({ email }).select('+emailVerificationToken +emailVerificationExpires');
   if (existingUser?.isVerified) throw new ApiError(409, 'User already exists');
 
@@ -121,6 +150,7 @@ export const register = async ({ name, email, password, role = 'Viewer', req }) 
   user.role = role;
   user.emailVerificationToken = hashToken(verificationToken);
   user.emailVerificationExpires = new Date(Date.now() + VERIFICATION_TOKEN_TTL_MS);
+  user.lastVerificationEmailSentAt = new Date();
   await user.save();
 
   const emailResult = await sendVerificationEmail(user, verificationToken);
@@ -138,6 +168,31 @@ export const register = async ({ name, email, password, role = 'Viewer', req }) 
     user: normalizeUser(user),
     verification
   };
+};
+
+export const resendVerificationEmail = async ({ email }) => {
+  const user = await User.findOne({ email }).select('+emailVerificationToken +emailVerificationExpires +lastVerificationEmailSentAt');
+  
+  if (!user) throw new ApiError(404, 'User not found');
+  if (user.isVerified) throw new ApiError(400, 'Account is already verified');
+
+  const now = new Date();
+  if (user.lastVerificationEmailSentAt) {
+    const secondsSinceLastEmail = (now - user.lastVerificationEmailSentAt) / 1000;
+    if (secondsSinceLastEmail < 60) {
+      throw new ApiError(429, `Please wait ${Math.ceil(60 - secondsSinceLastEmail)} seconds before requesting a new email`);
+    }
+  }
+
+  const verificationToken = generateOpaqueToken();
+  user.emailVerificationToken = hashToken(verificationToken);
+  user.emailVerificationExpires = new Date(Date.now() + VERIFICATION_TOKEN_TTL_MS);
+  user.lastVerificationEmailSentAt = now;
+  await user.save({ validateBeforeSave: false });
+
+  const emailResult = await sendVerificationEmail(user, verificationToken);
+
+  return { emailSent: emailResult.sent };
 };
 
 export const login = async ({ email, password, req }) => {

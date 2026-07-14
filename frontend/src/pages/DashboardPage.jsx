@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { ArrowUpRight, ArrowDownRight, TrendingUp, Activity } from 'lucide-react';
 import DashboardCard from '../components/DashboardCard';
 import SmallChart from '../components/SmallChart';
+import AssetDonutChart from '../components/AssetDonutChart';
+import PriceAlertsCard from '../components/PriceAlertsCard';
 import { useSocket } from '../hooks/useSocket';
 import { getAssets } from '../services/assetService';
 import { getTradeHistory } from '../services/tradingService';
@@ -78,15 +80,15 @@ const DashboardPage = () => {
 
     let content = `TradePulse Portfolio Report\nGenerated: ${new Date().toLocaleString()}\n\n`;
     content += `Positions Count: ${portfolio.metrics.positions}\n`;
-    content += `Total Value: $${portfolio.totalValue.toFixed(2)}\n`;
-    content += `Total Cost Basis: $${portfolio.metrics.totalCost.toFixed(2)}\n`;
-    content += `Total Unrealized P/L: $${portfolio.metrics.totalUnrealizedPnL.toFixed(2)}\n\n`;
+    content += `Total Value: ₹${portfolio.totalValue.toFixed(2)}\n`;
+    content += `Total Cost Basis: ₹${portfolio.metrics.totalCost.toFixed(2)}\n`;
+    content += `Total Unrealized P/L: ₹${portfolio.metrics.totalUnrealizedPnL.toFixed(2)}\n\n`;
     content += `Holdings Detail:\n`;
     content += `Symbol | Name | Quantity | Cost Basis | Current Value | P/L | Allocation\n`;
     content += `---------------------------------------------------------------------------\n`;
 
     portfolio.holdings.forEach((h) => {
-      content += `${h.symbol} | ${h.name} | ${h.quantity} | $${h.costBasis.toFixed(2)} | $${h.currentValue.toFixed(2)} | $${h.unrealizedPnL.toFixed(2)} | ${h.allocation}%\n`;
+      content += `${h.symbol} | ${h.name} | ${h.quantity} | ₹${h.costBasis.toFixed(2)} | ₹${h.currentValue.toFixed(2)} | ₹${h.unrealizedPnL.toFixed(2)} | ${h.allocation}%\n`;
     });
 
     const blob = new Blob([content], { type: 'text/plain' });
@@ -115,14 +117,14 @@ const DashboardPage = () => {
       },
       {
         title: 'Unrealized P/L',
-        value: `$${totalUnrealized.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+        value: `₹${totalUnrealized.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
         trend: totalUnrealized >= 0 ? '+4.2%' : '-1.6%',
         description: 'Current paper gains / losses',
         icon: <ArrowUpRight className="h-6 w-6" />
       },
       {
         title: 'Portfolio value',
-        value: `$${portfolioValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+        value: `₹${portfolioValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
         trend: '+1.4%',
         description: 'Net asset value',
         icon: <Activity className="h-6 w-6" />
@@ -154,11 +156,21 @@ const DashboardPage = () => {
     ];
   }, [portfolio]);
 
+  const donutData = useMemo(() => {
+    if (portfolio?.holdings?.length > 0) {
+      return portfolio.holdings.map((h) => ({
+        name: h.symbol,
+        value: h.currentValue
+      }));
+    }
+    return [{ name: 'Cash', value: 1 }];
+  }, [portfolio]);
+
   return (
     <section className="space-y-8">
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="text-4xl font-semibold text-white">Trading Dashboard</h1>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold">Trading Dashboard</h1>
           <p className="mt-2 text-slate-400">Real-time performance and market signals for your portfolio.</p>
         </div>
         <div className="flex flex-wrap gap-3">
@@ -177,18 +189,18 @@ const DashboardPage = () => {
         </div>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {summaryData.map((item) => (
           <DashboardCard key={item.title} {...item} />
         ))}
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[1.5fr_1fr]">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-[1.5fr_1fr] gap-4">
         <div className="glass-card rounded-3xl p-6">
           <div className="flex items-center justify-between gap-4 mb-6">
             <div>
-              <p className="text-sm uppercase tracking-[0.25em] text-slate-400">Portfolio growth</p>
-              <h2 className="mt-2 text-2xl font-semibold text-white">${portfolio?.totalValue?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}</h2>
+              <p className="text-xs sm:text-sm uppercase tracking-[0.25em] text-slate-400">Portfolio growth</p>
+              <h2 className="mt-2 text-xl sm:text-2xl font-semibold">₹{portfolio?.totalValue?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}</h2>
             </div>
             <div className="rounded-3xl bg-slate-900 px-4 py-2 text-sm text-sky-300">Live stream</div>
           </div>
@@ -196,22 +208,26 @@ const DashboardPage = () => {
         </div>
 
         <div className="space-y-4">
-          <div className="glass-card rounded-3xl p-6">
-            <h3 className="text-lg font-semibold text-white">Risk analysis</h3>
-            <p className="mt-3 text-slate-400">View current exposure, drawdown risk, and position leverage.</p>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-3xl bg-slate-900 p-4 text-slate-200">
-                <p className="text-sm uppercase tracking-[0.2em] text-slate-500">Positions</p>
-                <p className="mt-3 text-3xl font-semibold text-white">{portfolio?.metrics?.positions || 0}</p>
-              </div>
-              <div className="rounded-3xl bg-slate-900 p-4 text-slate-200">
-                <p className="text-sm uppercase tracking-[0.2em] text-slate-500">Unrealized P/L</p>
-                <p className="mt-3 text-3xl font-semibold text-white">${(portfolio?.metrics?.totalUnrealizedPnL || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+          <div className="glass-card rounded-3xl p-4 sm:p-6">
+            <h3 className="text-lg font-semibold">Asset Allocation</h3>
+            <p className="mt-3 text-slate-400">View current exposure across all held assets.</p>
+            <div className="mt-6 flex flex-col items-center">
+              <AssetDonutChart data={donutData} />
+              
+              <div className="mt-4 grid grid-cols-2 gap-3 w-full">
+                <div className="rounded-3xl bg-slate-900 p-4 text-slate-200">
+                  <p className="text-[10px] sm:text-xs uppercase tracking-[0.1em] sm:tracking-[0.2em] text-slate-500">Unrealized P/L</p>
+                  <p className="mt-1 text-lg sm:text-xl font-semibold">₹{(portfolio?.metrics?.totalUnrealizedPnL || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                </div>
+                <div className="rounded-3xl glass-card p-3 sm:p-4 text-slate-200">
+                  <p className="text-[10px] sm:text-xs uppercase tracking-[0.1em] sm:tracking-[0.2em] text-slate-500">Positions</p>
+                  <p className="mt-1 text-lg sm:text-xl font-semibold">{portfolio?.metrics?.positions || 0}</p>
+                </div>
               </div>
             </div>
           </div>
-          <div className="glass-card rounded-3xl p-6">
-            <h3 className="text-lg font-semibold text-white">Market pulse</h3>
+          <div className="glass-card rounded-3xl p-4 sm:p-6">
+            <h3 className="text-lg font-semibold">Market pulse</h3>
             <p className="mt-3 text-slate-400">Active traders, order book depth and sector momentum.</p>
             <div className="mt-6 space-y-4">
               <div className="flex items-center justify-between gap-4 rounded-3xl bg-slate-900 p-4">
@@ -224,7 +240,7 @@ const DashboardPage = () => {
               <div className="flex items-center justify-between gap-4 rounded-3xl bg-slate-900 p-4">
                 <div>
                   <p className="text-sm text-slate-400">Volume signal</p>
-                  <p className="mt-2 text-2xl font-semibold text-white">${((portfolio?.totalValue || 0) * 0.03).toLocaleString(undefined, { maximumFractionDigits: 0 }) || '0'}</p>
+                  <p className="mt-2 text-2xl font-semibold text-white">₹{((portfolio?.totalValue || 0) * 0.03).toLocaleString(undefined, { maximumFractionDigits: 0 }) || '0'}</p>
                 </div>
                 <TrendingUp className="h-6 w-6 text-emerald-400" />
               </div>
@@ -233,9 +249,9 @@ const DashboardPage = () => {
         </div>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[1.3fr_0.7fr]">
-        <div className="glass-card rounded-3xl p-6">
-          <h3 className="text-lg font-semibold text-white">Market feed</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-[1.3fr_0.7fr] gap-4">
+        <div className="glass-card rounded-3xl p-4 sm:p-6">
+          <h3 className="text-lg font-semibold">Market feed</h3>
           <div className="mt-4 space-y-3">
             {marketUpdates.length === 0 ? (
               <p className="text-slate-400">Waiting for market data updates...</p>
@@ -247,7 +263,7 @@ const DashboardPage = () => {
                 >
                   <div>
                     <p className="text-sm text-slate-400">{update.symbol}</p>
-                    <p className="mt-1 text-lg font-semibold text-white">${update.price.toFixed(2)}</p>
+                    <p className="mt-1 text-base sm:text-lg font-semibold">₹{update.price.toFixed(2)}</p>
                   </div>
                   <span
                     className={`rounded-full px-3 py-1 text-xs ${
@@ -262,25 +278,29 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        <div className="glass-card rounded-3xl p-6">
-          <h3 className="text-lg font-semibold text-white">Top assets</h3>
-          <div className="mt-4 space-y-3">
-            {topAssets.length === 0 ? (
-              <p className="text-slate-400">No top assets loaded yet.</p>
-            ) : (
-              topAssets.map((asset) => (
-                <div key={asset._id} className="rounded-3xl bg-slate-900 p-4">
-                  <div className="flex items-center justify-between gap-4">
-                    <div>
-                      <p className="text-sm text-slate-400">{asset.name}</p>
-                      <p className="mt-1 text-lg font-semibold text-white">${asset.currentPrice?.toFixed(2)}</p>
+        <div className="space-y-4">
+          <div className="glass-card rounded-3xl p-4 sm:p-6">
+            <h3 className="text-lg font-semibold">Top assets</h3>
+            <div className="mt-4 space-y-3">
+              {topAssets.length === 0 ? (
+                <p className="text-slate-400">No top assets loaded yet.</p>
+              ) : (
+                topAssets.map((asset) => (
+                  <div key={asset._id} className="rounded-3xl bg-slate-900 p-4">
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <p className="text-sm text-slate-400">{asset.name}</p>
+                        <p className="mt-1 text-base sm:text-lg font-semibold">₹{asset.currentPrice?.toFixed(2)}</p>
+                      </div>
+                      <span className="rounded-full bg-slate-800 px-3 py-1 text-xs text-slate-300">{asset.symbol}</span>
                     </div>
-                    <span className="rounded-full bg-slate-800 px-3 py-1 text-xs text-slate-300">{asset.symbol}</span>
                   </div>
-                </div>
-              ))
-            )}
+                ))
+              )}
+            </div>
           </div>
+          
+          <PriceAlertsCard marketUpdates={marketUpdates} />
         </div>
       </div>
     </section>

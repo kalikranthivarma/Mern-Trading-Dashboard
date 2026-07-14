@@ -32,7 +32,7 @@ const OrdersPage = () => {
   return (
     <section className="space-y-6">
       <div>
-        <h1 className="text-3xl font-semibold text-white">Orders & Executions</h1>
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold">Orders & Executions</h1>
         <p className="mt-2 text-slate-400">Review your open orders, pending requests, and complete trade executions history.</p>
       </div>
 
@@ -43,29 +43,29 @@ const OrdersPage = () => {
       ) : (
         <>
           {/* Order Metrics Card */}
-          <div className="glass-card rounded-3xl p-6">
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
-              <div className="rounded-2xl bg-slate-900/50 p-5 border border-white/5">
+          <div className="glass-card rounded-3xl p-4 sm:p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="rounded-2xl bg-[rgba(var(--bg-elevated))] p-5 border border-[rgba(var(--border-subtle))]">
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Placed</p>
-                <p className="mt-3 text-3xl font-bold text-white">{totalCount}</p>
+                <p className="mt-3 text-2xl sm:text-3xl font-bold">{totalCount}</p>
               </div>
-              <div className="rounded-2xl bg-slate-900/50 p-5 border border-white/5">
+              <div className="rounded-2xl bg-[rgba(var(--bg-elevated))] p-5 border border-[rgba(var(--border-subtle))]">
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Pending</p>
-                <p className="mt-3 text-3xl font-bold text-amber-400">{pendingCount}</p>
+                <p className="mt-3 text-2xl sm:text-3xl font-bold text-amber-500">{pendingCount}</p>
               </div>
-              <div className="rounded-2xl bg-slate-900/50 p-5 border border-white/5">
+              <div className="rounded-2xl bg-[rgba(var(--bg-elevated))] p-5 border border-[rgba(var(--border-subtle))]">
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Completed</p>
-                <p className="mt-3 text-3xl font-bold text-emerald-400">{executedCount}</p>
+                <p className="mt-3 text-2xl sm:text-3xl font-bold text-emerald-500">{executedCount}</p>
               </div>
-              <div className="rounded-2xl bg-slate-900/50 p-5 border border-white/5">
+              <div className="rounded-2xl bg-[rgba(var(--bg-elevated))] p-5 border border-[rgba(var(--border-subtle))]">
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Cancelled</p>
-                <p className="mt-3 text-3xl font-bold text-rose-500">{cancelledCount}</p>
+                <p className="mt-3 text-2xl sm:text-3xl font-bold text-rose-500">{cancelledCount}</p>
               </div>
             </div>
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex border-b border-white/10 gap-6">
+          <div className="flex border-b border-[rgba(var(--border-subtle))] gap-6 overflow-x-auto whitespace-nowrap scrollbar-hide">
             <button
               onClick={() => setActiveTab('orders')}
               className={`pb-4 text-sm font-semibold transition relative ${
@@ -91,7 +91,7 @@ const OrdersPage = () => {
           </div>
 
           {/* Content Lists */}
-          <div className="glass-card rounded-3xl p-6 overflow-hidden">
+          <div className="glass-card rounded-3xl p-4 sm:p-6 overflow-hidden">
             {activeTab === 'orders' ? (
               orders.length === 0 ? (
                 <div className="flex h-48 flex-col items-center justify-center text-center p-6 bg-slate-900/30 rounded-2xl">
@@ -99,25 +99,25 @@ const OrdersPage = () => {
                   <p className="text-slate-400">No placed orders found.</p>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm text-slate-300">
+                <div className="overflow-x-auto -mx-4 sm:mx-0">
+                  <table className="w-full text-left text-sm text-[rgb(var(--text-secondary))] whitespace-nowrap min-w-[800px] sm:min-w-full">
                     <thead>
-                      <tr className="border-b border-white/5 text-xs uppercase tracking-wider text-slate-500">
-                        <th className="py-3 px-4">Side</th>
+                      <tr className="border-b border-[rgba(var(--border-subtle))] text-xs uppercase tracking-wider text-[rgb(var(--text-muted))]">
+                        <th className="py-3 px-4 sm:px-4 pl-8 sm:pl-4">Side</th>
                         <th className="py-3 px-4">Asset</th>
                         <th className="py-3 px-4 text-right">Quantity</th>
                         <th className="py-3 px-4 text-right">Price</th>
                         <th className="py-3 px-4 text-right">Total Amount</th>
                         <th className="py-3 px-4 text-center">Status</th>
-                        <th className="py-3 px-4 text-right">Placed At</th>
+                        <th className="py-3 px-4 pr-8 sm:pr-4 text-right">Placed At</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5">
+                    <tbody className="divide-y divide-[rgba(var(--border-subtle))]">
                       {orders.map((order) => {
                         const isBuy = order.tradeType === 'BUY';
                         return (
-                          <tr key={order._id} className="hover:bg-white/5 transition">
-                            <td className="py-4 px-4 font-semibold">
+                          <tr key={order._id} className="hover:bg-[rgb(var(--bg-elevated))] transition">
+                            <td className="py-4 px-4 pl-8 sm:pl-4 font-semibold">
                               <span
                                 className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${
                                   isBuy ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'
@@ -131,17 +131,17 @@ const OrdersPage = () => {
                             </td>
                             <td className="py-4 px-4 text-right font-medium">{order.quantity}</td>
                             <td className="py-4 px-4 text-right font-medium">
-                              ${order.price?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                              ₹{order.price?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                             </td>
                             <td className="py-4 px-4 text-right font-medium text-slate-200">
-                              ${order.totalAmount?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                              ₹{order.totalAmount?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                             </td>
                             <td className="py-4 px-4 text-center">
                               <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 text-emerald-400 px-2.5 py-0.5 text-xs font-semibold">
                                 <CheckCircle2 className="h-3 w-3" /> executed
                               </span>
                             </td>
-                            <td className="py-4 px-4 text-right text-xs text-slate-500">
+                            <td className="py-4 px-4 pr-8 sm:pr-4 text-right text-xs text-[rgb(var(--text-muted))]">
                               {new Date(order.createdAt).toLocaleString()}
                             </td>
                           </tr>
@@ -157,24 +157,24 @@ const OrdersPage = () => {
                 <p className="text-slate-400">No executed trades in history.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-slate-300">
+              <div className="overflow-x-auto -mx-4 sm:mx-0">
+                <table className="w-full text-left text-sm text-[rgb(var(--text-secondary))] whitespace-nowrap min-w-[800px] sm:min-w-full">
                   <thead>
-                    <tr className="border-b border-white/5 text-xs uppercase tracking-wider text-slate-500">
-                      <th className="py-3 px-4">Side</th>
+                    <tr className="border-b border-[rgba(var(--border-subtle))] text-xs uppercase tracking-wider text-[rgb(var(--text-muted))]">
+                      <th className="py-3 px-4 pl-8 sm:pl-4">Side</th>
                       <th className="py-3 px-4">Asset</th>
                       <th className="py-3 px-4 text-right">Quantity</th>
                       <th className="py-3 px-4 text-right">Execution Price</th>
                       <th className="py-3 px-4 text-right">Total Amount</th>
-                      <th className="py-3 px-4 text-right">Executed At</th>
+                      <th className="py-3 px-4 pr-8 sm:pr-4 text-right">Executed At</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/5">
+                  <tbody className="divide-y divide-[rgba(var(--border-subtle))]">
                     {trades.map((trade) => {
                       const isBuy = trade.tradeType === 'BUY';
                       return (
-                        <tr key={trade._id} className="hover:bg-white/5 transition">
-                          <td className="py-4 px-4 font-semibold">
+                        <tr key={trade._id} className="hover:bg-[rgb(var(--bg-elevated))] transition">
+                          <td className="py-4 px-4 pl-8 sm:pl-4 font-semibold">
                             <span
                               className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${
                                 isBuy ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'
@@ -191,12 +191,12 @@ const OrdersPage = () => {
                           </td>
                           <td className="py-4 px-4 text-right font-medium">{trade.quantity}</td>
                           <td className="py-4 px-4 text-right font-medium">
-                            ${trade.price?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                            ₹{trade.price?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                           </td>
                           <td className="py-4 px-4 text-right font-bold text-slate-200">
-                            ${trade.totalAmount?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                            ₹{trade.totalAmount?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                           </td>
-                          <td className="py-4 px-4 text-right text-xs text-slate-500">
+                          <td className="py-4 px-4 pr-8 sm:pr-4 text-right text-xs text-[rgb(var(--text-muted))]">
                             {new Date(trade.createdAt).toLocaleString()}
                           </td>
                         </tr>

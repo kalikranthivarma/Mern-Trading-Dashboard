@@ -59,7 +59,10 @@ import portfolioRoutes from "./routes/portfolioRoutes.js";
 import tradeRoutes from "./routes/tradeRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import reportRoutes from "./routes/reportRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import withdrawalRoutes from "./routes/withdrawalRoutes.js";
+import kycRoutes from "./routes/kycRoutes.js";
 
 // Socket
 import { initializeSocket } from "./socket/socket.js";
@@ -95,6 +98,10 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve Static Uploads (KYC Docs, Profile Pics)
+import path from "path";
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
 // Health Check
 app.get("/", (req, res) => {
   res.status(200).json({
@@ -108,14 +115,19 @@ app.use("/api/auth", authRoutes);
 app.use("/api/assets", assetRoutes);
 app.use("/api/portfolio", portfolioRoutes);
 app.use("/api/trade", tradeRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/reports", reportRoutes);
+app.use("/api/kyc", kycRoutes);
 
 // Razorpay Payment Routes
 app.use("/api/payment", paymentRoutes);
 
 // Admin Routes
 app.use("/api/admin", adminRoutes);
+
+// Withdrawal Routes
+app.use("/api/withdrawals", withdrawalRoutes);
 
 // Handle Unknown Routes
 app.use("*", (req, res) => {

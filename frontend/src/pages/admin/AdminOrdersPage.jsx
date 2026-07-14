@@ -36,7 +36,7 @@ const AdminOrdersPage = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Order Management</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Order Management</h1>
           <p className="text-gray-400 text-sm mt-1">Monitor and manage user trading orders.</p>
         </div>
       </div>
@@ -55,8 +55,8 @@ const AdminOrdersPage = () => {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+          <table className="w-full text-left border-collapse min-w-[800px]">
             <thead>
               <tr className="bg-gray-900/50 text-gray-400 text-xs uppercase tracking-wider">
                 <th className="p-4 font-medium">Date</th>
@@ -100,7 +100,7 @@ const AdminOrdersPage = () => {
                     <td className="p-4">
                       <div className="flex flex-col">
                         <span className="text-white text-sm">{order.quantity} units</span>
-                        <span className="text-gray-500 text-xs">@ ${order.price}</span>
+                        <span className="text-gray-500 text-xs">@ ₹{order.price}</span>
                       </div>
                     </td>
                     <td className="p-4">

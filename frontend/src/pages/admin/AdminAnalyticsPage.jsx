@@ -37,11 +37,11 @@ const AdminAnalyticsPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6">
           <h3 className="text-sm font-medium text-gray-400">Total Trading Volume</h3>
-          <p className="text-3xl font-bold text-white mt-2">${data.tradingVolume?.toLocaleString()}</p>
+          <p className="text-3xl font-bold text-white mt-2">₹{data.tradingVolume?.toLocaleString()}</p>
         </div>
         <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6">
           <h3 className="text-sm font-medium text-gray-400">Total Exchange Revenue</h3>
-          <p className="text-3xl font-bold text-emerald-400 mt-2">${data.revenue?.toLocaleString()}</p>
+          <p className="text-3xl font-bold text-emerald-400 mt-2">₹{data.revenue?.toLocaleString()}</p>
         </div>
         <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6">
           <h3 className="text-sm font-medium text-gray-400">Active Traders (30d)</h3>
@@ -64,7 +64,7 @@ const AdminAnalyticsPage = () => {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" vertical={false} />
               <XAxis dataKey="date" stroke="#9ca3af" axisLine={false} tickLine={false} />
-              <YAxis stroke="#9ca3af" axisLine={false} tickLine={false} tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`} />
+              <YAxis stroke="#9ca3af" axisLine={false} tickLine={false} tickFormatter={(value) => `₹${(value / 1000000).toFixed(1)}M`} />
               <Tooltip 
                 contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }}
                 itemStyle={{ color: '#818cf8' }}
@@ -80,7 +80,7 @@ const AdminAnalyticsPage = () => {
             <BarChart data={data.revenueTrend}>
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" vertical={false} />
               <XAxis dataKey="month" stroke="#9ca3af" axisLine={false} tickLine={false} />
-              <YAxis stroke="#9ca3af" axisLine={false} tickLine={false} tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`} />
+              <YAxis stroke="#9ca3af" axisLine={false} tickLine={false} tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}k`} />
               <Tooltip 
                 cursor={{ fill: '#374151', opacity: 0.4 }}
                 contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }}

@@ -8,6 +8,7 @@ import {
   forgotPassword,
   resetPassword,
   verifyEmail,
+  resendVerificationEmail,
   changePassword,
   updateProfile,
 } from "../controllers/authController.js";
@@ -76,6 +77,13 @@ router.get(
   verifyEmailValidation,
   validateRequest,
   verifyEmail
+);
+
+router.post(
+  "/resend-verification",
+  forgotPasswordValidation,
+  validateRequest,
+  resendVerificationEmail
 );
 
 /* ==========================================================

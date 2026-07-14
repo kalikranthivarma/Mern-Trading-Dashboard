@@ -40,7 +40,7 @@ const AssetsPage = () => {
     <section className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-semibold text-white">Market Assets</h1>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold">Market Assets</h1>
           <p className="mt-2 text-slate-400">Browse categories and real-time details for stocks, cryptos, and other instruments.</p>
         </div>
 
@@ -85,7 +85,7 @@ const AssetsPage = () => {
           <p className="text-slate-400">No assets found matching the criteria.</p>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredAssets.map((asset) => {
             const cat = asset.category || asset.type || 'Stock';
             return (
@@ -99,21 +99,21 @@ const AssetsPage = () => {
                     </div>
                     <span className="text-xs text-slate-500 font-mono">{asset.symbol}</span>
                   </div>
-                  <h3 className="mt-4 text-xl font-bold text-white">{asset.name}</h3>
-                  <p className="mt-1 text-xs text-slate-400">{asset.sector || 'Market Instrument'}</p>
+                  <h3 className="mt-4 text-xl font-bold text-[rgb(var(--text-primary))]">{asset.name}</h3>
+                  <p className="mt-1 text-xs text-[rgb(var(--text-muted))]">{asset.sector || 'Market Instrument'}</p>
                 </div>
 
-                <div className="pt-4 border-t border-white/5 flex items-end justify-between">
+                <div className="pt-4 border-t border-[rgba(var(--border-subtle))] flex items-end justify-between">
                   <div>
-                    <p className="text-xs text-slate-500 uppercase tracking-wider">Current Price</p>
-                    <p className="text-2xl font-bold text-white mt-1">
-                      ${asset.currentPrice?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    <p className="text-xs text-[rgb(var(--text-muted))] uppercase tracking-wider">Current Price</p>
+                    <p className="text-2xl font-bold text-[rgb(var(--text-primary))] mt-1">
+                      ₹{asset.currentPrice?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="text-xs text-slate-500 uppercase tracking-wider">Market Cap</p>
                     <p className="text-sm font-semibold text-slate-300 mt-1">
-                      ${(asset.marketCap / 1e9).toFixed(1)}B
+                      ₹{(asset.marketCap / 1e9).toFixed(1)}B
                     </p>
                   </div>
                 </div>

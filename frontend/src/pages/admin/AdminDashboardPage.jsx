@@ -50,10 +50,10 @@ const AdminDashboardPage = () => {
     <div className="space-y-6 pb-12">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">System Dashboard</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">System Dashboard</h1>
           <p className="text-slate-400 text-sm mt-1">Real-time overview of platform health and metrics.</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3">
           <button className="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-700">
             Download Report
           </button>
@@ -75,9 +75,9 @@ const AdminDashboardPage = () => {
         <StatCard title="Total Orders" value={stats?.orders?.total || 0} icon={<ShoppingCart size={20} />} trend="up" trendValue={28} color="amber" />
         <StatCard title="Today's Trades" value={stats?.orders?.todaysTrades || 0} icon={<ArrowRightLeft size={20} />} trend="up" trendValue={45} color="teal" />
         
-        <StatCard title="Trading Volume" value={`$${((stats?.financials?.totalTradingVolume || 0) / 1000000).toFixed(2)}M`} icon={<BarChart3 size={20} />} trend="up" trendValue={24} color="indigo" />
-        <StatCard title="Exchange Revenue" value={`$${((stats?.financials?.exchangeRevenue || 0) / 1000).toFixed(1)}k`} icon={<DollarSign size={20} />} trend="up" trendValue={18} color="emerald" />
-        <StatCard title="Platform Profit" value={`$${((stats?.financials?.platformProfit || 0) / 1000).toFixed(1)}k`} icon={<TrendingUp size={20} />} trend="up" trendValue={14} color="blue" />
+        <StatCard title="Trading Volume" value={`₹${((stats?.financials?.totalTradingVolume || 0) / 1000000).toFixed(2)}M`} icon={<BarChart3 size={20} />} trend="up" trendValue={24} color="indigo" />
+        <StatCard title="Exchange Revenue" value={`₹${((stats?.financials?.exchangeRevenue || 0) / 1000).toFixed(1)}k`} icon={<DollarSign size={20} />} trend="up" trendValue={18} color="emerald" />
+        <StatCard title="Platform Profit" value={`₹${((stats?.financials?.platformProfit || 0) / 1000).toFixed(1)}k`} icon={<TrendingUp size={20} />} trend="up" trendValue={14} color="blue" />
         <StatCard title="Open Issues" value={stats?.financials?.openIssues || 0} icon={<AlertCircle size={20} />} trend="up" trendValue={5} color="rose" />
       </div>
 
@@ -93,7 +93,7 @@ const AdminDashboardPage = () => {
               <option>Last 7 Days</option>
             </select>
           </div>
-          <div className="h-72">
+          <div className="h-[250px] sm:h-72">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={analytics?.dailyTrades || []} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
                 <defs>
@@ -104,7 +104,7 @@ const AdminDashboardPage = () => {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
                 <XAxis dataKey="date" stroke="#64748b" tick={{fill: '#64748b', fontSize: 12}} axisLine={false} tickLine={false} />
-                <YAxis yAxisId="left" stroke="#64748b" tick={{fill: '#64748b', fontSize: 12}} axisLine={false} tickLine={false} tickFormatter={(val) => `$${val/1000}k`} />
+                <YAxis yAxisId="left" stroke="#64748b" tick={{fill: '#64748b', fontSize: 12}} axisLine={false} tickLine={false} tickFormatter={(val) => `₹${val/1000}k`} />
                 <YAxis yAxisId="right" orientation="right" stroke="#64748b" tick={{fill: '#64748b', fontSize: 12}} axisLine={false} tickLine={false} />
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', borderRadius: '0.5rem', color: '#fff' }}
@@ -126,12 +126,12 @@ const AdminDashboardPage = () => {
               <option>2024</option>
             </select>
           </div>
-          <div className="h-72">
+          <div className="h-[250px] sm:h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={analytics?.revenueTrend || []} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
                 <XAxis dataKey="month" stroke="#64748b" tick={{fill: '#64748b', fontSize: 12}} axisLine={false} tickLine={false} />
-                <YAxis stroke="#64748b" tick={{fill: '#64748b', fontSize: 12}} axisLine={false} tickLine={false} tickFormatter={(val) => `$${val/1000}k`} />
+                <YAxis stroke="#64748b" tick={{fill: '#64748b', fontSize: 12}} axisLine={false} tickLine={false} tickFormatter={(val) => `₹${val/1000}k`} />
                 <Tooltip 
                   cursor={{fill: '#1e293b'}}
                   contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', borderRadius: '0.5rem', color: '#fff' }}
@@ -226,7 +226,7 @@ const AdminDashboardPage = () => {
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-slate-200">{trader.name}</p>
-                  <p className="text-xs text-slate-500">Vol: ${(trader.volume/1000).toFixed(0)}k</p>
+                  <p className="text-xs text-slate-500">Vol: ₹{(trader.volume/1000).toFixed(0)}k</p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-semibold text-emerald-400">+${(trader.profit/1000).toFixed(1)}k</p>
@@ -247,8 +247,8 @@ const AdminDashboardPage = () => {
             <h3 className="text-base font-semibold text-white">Recent Transactions</h3>
             <button className="text-indigo-400 text-sm hover:text-indigo-300 font-medium">View All</button>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto -mx-5 sm:mx-0 px-5 sm:px-0">
+            <table className="w-full text-left border-collapse min-w-[500px]">
               <thead>
                 <tr className="text-slate-500 text-xs uppercase tracking-wider border-b border-slate-800">
                   <th className="pb-3 font-medium">User</th>
@@ -268,7 +268,7 @@ const AdminDashboardPage = () => {
                         {tx.type}
                       </span>
                     </td>
-                    <td className="py-3 text-slate-400 text-sm">${tx.total?.toLocaleString() || "0"}</td>
+                    <td className="py-3 text-slate-400 text-sm">₹{tx.total?.toLocaleString() || "0"}</td>
                     <td className="py-3 text-right">
                       <span className="text-emerald-400 text-xs">Completed</span>
                     </td>
@@ -285,8 +285,8 @@ const AdminDashboardPage = () => {
             <h3 className="text-base font-semibold text-white">Recent Registrations</h3>
             <button className="text-indigo-400 text-sm hover:text-indigo-300 font-medium">View All</button>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto -mx-5 sm:mx-0 px-5 sm:px-0">
+            <table className="w-full text-left border-collapse min-w-[500px]">
               <thead>
                 <tr className="text-slate-500 text-xs uppercase tracking-wider border-b border-slate-800">
                   <th className="pb-3 font-medium">Name</th>

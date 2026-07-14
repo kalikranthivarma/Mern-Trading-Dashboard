@@ -75,7 +75,7 @@ export const authorize = (...roles) => {
    Admin Protect Middleware
 ========================================================== */
 
-export const adminProtect = authorize("admin");
+export const adminProtect = authorize("admin", "superadmin", "support");
 
 /* ==========================================================
    User Protect Middleware

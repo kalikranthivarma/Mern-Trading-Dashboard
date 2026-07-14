@@ -87,6 +87,8 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         processRefreshQueue(refreshError, null);
+        localStorage.removeItem('persist:root');
+        window.location.href = '/login';
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

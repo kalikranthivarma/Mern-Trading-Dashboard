@@ -7,6 +7,7 @@ import { PersistGate } from "redux-persist/integration/react";
 
 import App from "./App";
 import { store, persistor } from "./redux/store";
+import { ThemeProvider } from "./context/ThemeContext";
 
 import "./index.css";
 
@@ -27,7 +28,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <QueryClientProvider client={queryClient}>
-            <App />
+            <ThemeProvider>
+              <App />
+            </ThemeProvider>
           </QueryClientProvider>
         </PersistGate>
       </Provider>

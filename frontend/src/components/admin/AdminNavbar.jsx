@@ -7,7 +7,7 @@ const AdminNavbar = ({ toggleSidebar }) => {
       <div className="flex items-center gap-4 flex-1">
         <button 
           onClick={toggleSidebar}
-          className="lg:hidden p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800/50 transition-colors"
+          className="md:hidden p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800/50 transition-colors"
         >
           <Menu size={24} />
         </button>

@@ -33,6 +33,10 @@ const errorHandler = (err, req, res, next) => {
   console.error("MESSAGE:", err.message);
   console.error("STACK:", err.stack);
   console.error("================================");
+  
+  import('fs').then(fs => {
+    fs.appendFileSync('error_log.txt', `ERROR: ${err.message}\nSTACK: ${err.stack}\n\n`);
+  });
 
   const statusCode =
     err.statusCode || (res.statusCode === 200 ? 500 : res.statusCode);

@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import razorpay from "../config/razorpay.js";
 import Payment from "../models/Payment.js";
+import User from "../models/User.js";
 
 // ==========================================================
 // Create Razorpay Order
@@ -14,6 +15,13 @@ export const createOrder = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Please provide a valid amount.",
+      });
+    }
+
+    if (req.user.kycStatus !== "approved") {
+      return res.status(403).json({
+        success: false,
+        message: "Your KYC must be approved by an Admin before you can deposit funds.",
       });
     }
 
@@ -103,6 +111,11 @@ export const verifyPayment = async (req, res) => {
       razorpaySignature: razorpay_signature,
       status: "Success",
     });
+
+    // Add amount to user's available balance
+    const user = await User.findById(req.user._id);
+    user.availableBalance = (user.availableBalance || 0) + Number(amount);
+    await user.save();
 
     return res.status(200).json({
       success: true,

@@ -6,6 +6,7 @@ import {
   forgotPassword as forgotPasswordService,
   resetPassword as resetPasswordService,
   verifyEmail as verifyEmailService,
+  resendVerificationEmail as resendVerificationEmailService,
   changePassword as changePasswordService,
   updateProfile as updateProfileService
 } from '../services/authService.js';
@@ -140,6 +141,20 @@ export const verifyEmail = async (req, res, next) => {
         user: result.user,
         accessToken: result.accessToken
       }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resendVerificationEmail = async (req, res, next) => {
+  try {
+    const result = await resendVerificationEmailService({ email: req.body.email });
+
+    res.status(200).json({
+      success: true,
+      message: 'Verification email sent successfully',
+      data: result
     });
   } catch (error) {
     next(error);
