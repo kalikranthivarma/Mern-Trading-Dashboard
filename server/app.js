@@ -31,7 +31,12 @@ app.use(helmet());
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: [
+      process.env.CLIENT_URL,
+      process.env.FRONTEND_URL,
+      "http://localhost:5173",
+      "https://mern-trading-dashboard-1.onrender.com"
+    ].filter(Boolean),
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
