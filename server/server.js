@@ -89,7 +89,12 @@ initializeSocket(server);
 // Middleware
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: [
+      process.env.FRONTEND_URL,
+      process.env.CLIENT_URL,
+      "http://localhost:5173",
+      "https://mern-trading-dashboard-1.onrender.com"
+    ].filter(Boolean),
     credentials: true,
   })
 );
