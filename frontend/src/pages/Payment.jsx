@@ -24,7 +24,7 @@ const Payment = () => {
 
       // Create Razorpay Order
       const response = await axios.post(
-        "http://localhost:5000/api/payment/create-order",
+        `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/payment/create-order`,
         {
           amount,
         },
@@ -56,7 +56,7 @@ const Payment = () => {
 
             // Verify Payment
             const verifyResponse = await axios.post(
-              "http://localhost:5000/api/payment/verify-payment",
+              `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/payment/verify-payment`,
               {
                 razorpay_order_id: paymentResponse.razorpay_order_id,
                 razorpay_payment_id: paymentResponse.razorpay_payment_id,

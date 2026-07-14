@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/admin";
+const API_URL = import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}/admin` : "http://localhost:5000/api/admin";
 
 // Use a separate axios instance for admin calls if needed
 const adminApi = axios.create({
@@ -117,14 +117,14 @@ export const createGlobalNotification = async (data, token) => {
 };
 
 export const getWithdrawals = async (token) => {
-  const response = await axios.get("http://localhost:5000/api/withdrawals/admin/all", {
+  const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/withdrawals/admin/all`, {
     headers: { Authorization: `Bearer ${token}` }
   });
   return response.data;
 };
 
 export const processWithdrawal = async (id, action, remarks, token) => {
-  const response = await axios.post(`http://localhost:5000/api/withdrawals/admin/${id}/${action}`, { remarks }, {
+  const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/withdrawals/admin/${id}/${action}`, { remarks }, {
     headers: { Authorization: `Bearer ${token}` }
   });
   return response.data;

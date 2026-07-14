@@ -4,9 +4,8 @@ import { getAssets } from "../../services/adminService"; // I need to add create
 import axios from "axios";
 import Swal from 'sweetalert2';
 
-// Quick fallback for API instance
 const adminApi = axios.create({
-  baseURL: "http://localhost:5000/api/admin",
+  baseURL: import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}/admin` : "http://localhost:5000/api/admin",
   withCredentials: true,
 });
 
