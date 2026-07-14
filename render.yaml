@@ -1,0 +1,50 @@
+services:
+  # ---------------------------------------------------------
+  # 1. BACKEND (Node.js API)
+  # ---------------------------------------------------------
+  - type: web
+    name: mern-trading-api
+    env: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: NODE_ENV
+        value: production
+      # You MUST add these actual secrets in the Render Dashboard after deploying:
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+      # Frontend URL for CORS
+      - key: FRONTEND_URL
+        value: https://mern-trading-web.onrender.com
+
+  # ---------------------------------------------------------
+  # 2. FRONTEND (React / Vite Static Site)
+  # ---------------------------------------------------------
+  - type: web
+    name: mern-trading-web
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://mern-trading-api.onrender.com/api
+    
+    # Render rewrite rules for React Router (SPA)
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
