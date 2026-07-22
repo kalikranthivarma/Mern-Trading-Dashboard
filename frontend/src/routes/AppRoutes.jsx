@@ -28,7 +28,6 @@ import AdminLoginPage from '../pages/admin/AdminLoginPage';
 import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
 import AdminUsersPage from '../pages/admin/AdminUsersPage';
 import AdminAssetsPage from '../pages/admin/AdminAssetsPage';
-import AdminMarketPage from '../pages/admin/AdminMarketPage';
 import AdminOrdersPage from '../pages/admin/AdminOrdersPage';
 import AdminTransactionsPage from '../pages/admin/AdminTransactionsPage';
 import AdminAnalyticsPage from '../pages/admin/AdminAnalyticsPage';
@@ -69,7 +68,6 @@ const AppRoutes = () => (
       <Route path="transactions" element={<AdminTransactionsPage />} />
       <Route path="withdrawals" element={<AdminWithdrawalsPage />} />
       <Route path="analytics" element={<AdminAnalyticsPage />} />
-      <Route path="market" element={<AdminMarketPage />} />
       <Route path="orders" element={<AdminOrdersPage />} />
       <Route path="notifications" element={<AdminNotificationsPage />} />
       <Route path="settings" element={<AdminSettingsPage />} />

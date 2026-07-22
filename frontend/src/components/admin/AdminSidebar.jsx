@@ -32,7 +32,6 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
         { name: "Dashboard", path: "/admin/dashboard", icon: <LayoutDashboard size={20} /> },
         { name: "Users", path: "/admin/users", icon: <Users size={20} /> },
         { name: "Assets", path: "/admin/assets", icon: <Briefcase size={20} /> },
-        { name: "Markets", path: "/admin/market", icon: <Activity size={20} /> },
       ]
     },
     {
